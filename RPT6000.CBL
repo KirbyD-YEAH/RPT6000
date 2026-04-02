@@ -1,10 +1,10 @@
        IDENTIFICATION DIVISION.
 
-       PROGRAM-ID. RPT5000.
+       PROGRAM-ID. RPT6000.
       *****************************************************************
-      *  Programmers: Clay Rasmussen and Kirby Dunker
+      *  Programmers: Kirby Dunker
       *  Date.......: March 30, 2025
-      *  GitHub URL.: https://github.com/KirbyD-YEAH/RPT5000
+      *  GitHub URL.: https://github.com/KirbyD-YEAH/RPT6000
       *  Description: This program reads a customer master file and
       *  produces a year-to-date sales report by branch.
       *  It calculates sales changes (amount and percent),
@@ -18,7 +18,7 @@
 
        FILE-CONTROL.
            SELECT INPUT-CUSTMAST ASSIGN TO CUSTMAST.
-           SELECT OUTPUT-RPT5000 ASSIGN TO RPT5000.
+           SELECT OUTPUT-RPT6000 ASSIGN TO RPT6000.
 
        DATA DIVISION.
        FILE SECTION.
@@ -37,7 +37,7 @@
            05  CM-SALES-LAST-YTD       PIC S9(5)V9(2).
            05  FILLER                  PIC X(87).
 
-       FD  OUTPUT-RPT5000
+       FD  OUTPUT-RPT6000
            RECORDING MODE IS F
            LABEL RECORDS ARE STANDARD
            RECORD CONTAINS 130 CHARACTERS
@@ -95,7 +95,7 @@
            05  FILLER          PIC X(20)   VALUE "YEAR-TO-DATE SALES R".
            05  FILLER          PIC X(5)    VALUE "EPORT".
            05  FILLER          PIC X(23)   VALUE SPACE.
-           05  FILLER          PIC X(6)    VALUE "PAGE: ".
+           05  FILLER          PIC X(11)    VALUE "     PAGE: ".
            05  HL1-PAGE-NUMBER PIC ZZZ9.
 
        01  HEADING-LINE-2.
@@ -103,16 +103,16 @@
            05  HL2-HOURS       PIC 9(2).
            05  FILLER          PIC X(1)    VALUE ":".
            05  HL2-MINUTES     PIC 9(2).
-           05  FILLER          PIC X(72)   VALUE SPACE.
-           05  FILLER          PIC X(7)   VALUE "RPT5000".
+           05  FILLER          PIC X(77)   VALUE SPACE.
+           05  FILLER          PIC X(7)   VALUE "RPT6000".
 
        01  HEADING-LINE-3.
            05  FILLER PIC X(8)  VALUE "BRANCH  ".
            05  FILLER PIC X(13) VALUE "SALES CUST   ".
            05  FILLER PIC X(23) VALUE "SALES                  ".
            05  FILLER PIC X(16) VALUE "  SALES    ".
-           05  FILLER PIC X(14) VALUE "CHANGE        ".
-           05  FILLER PIC X(7)  VALUE "CHANGE ".
+           05  FILLER PIC X(15) VALUE "CHANGE         ".
+           05  FILLER PIC X(6)  VALUE "CHANGE".
            05  FILLER PIC X(44) VALUE SPACE.
 
        01  HEADING-LINE-4.
@@ -121,9 +121,9 @@
            05  FILLER PIC X(24) VALUE " CUSTOMER NAME          ".
            05  FILLER PIC X(16) VALUE "  THIS YTD      ".
            05  FILLER PIC X(14) VALUE "LAST YTD      ".
-           05  FILLER PIC X(13) VALUE "AMOUNT       ".
-           05  FILLER PIC X(7)  VALUE "PERCENT".
-           05  FILLER PIC X(44) VALUE SPACE.
+           05  FILLER PIC X(13) VALUE " AMOUNT      ".
+           05  FILLER PIC X(8)  VALUE " PERCENT".
+           05  FILLER PIC X(43) VALUE SPACE.
 
        01  HEADING-LINE-5.
            05  FILLER PIC X(6)  VALUE ALL "-".
@@ -140,7 +140,7 @@
            05  FILLER PIC X(4)  VALUE SPACE.
            05  FILLER PIC X(10) VALUE ALL "-".
            05  FILLER PIC X(4)  VALUE SPACE.
-           05  FILLER PIC X(7)  VALUE ALL "-".
+           05  FILLER PIC X(9)  VALUE ALL "-".
            05  FILLER PIC X(38) VALUE SPACE.
 
        01  CUSTOMER-LINE.
@@ -170,9 +170,9 @@
            05  STL-SALES-LAST-YTD  PIC ZZZ,ZZ9.99-.
            05  FILLER              PIC X(3)    VALUE SPACE.
            05  STL-CHANGE-AMOUNT   PIC ZZZ,ZZ9.99-.
-           05  FILLER              PIC X(3)    VALUE SPACE.
+           05  FILLER              PIC X(4)    VALUE SPACE.
            05  STL-CHANGE-PERCENT  PIC ZZ9.9-.
-           05  FILLER              PIC X(47)   VALUE "*".
+           05  FILLER              PIC X(46)   VALUE "*".
 
        01  BRANCH-TOTAL-LINE.
            05  FILLER              PIC X(30)   VALUE SPACE.
@@ -182,33 +182,30 @@
            05  BTL-SALES-LAST-YTD  PIC ZZZ,ZZ9.99-.
            05  FILLER              PIC X(3)    VALUE SPACE.
            05  BTL-CHANGE-AMOUNT   PIC ZZZ,ZZ9.99-.
-           05  FILLER              PIC X(3)    VALUE SPACE.
+           05  FILLER              PIC X(4)    VALUE SPACE.
            05  BTL-CHANGE-PERCENT  PIC ZZ9.9-.
-           05  FILLER              PIC X(47)   VALUE "**".
+           05  FILLER              PIC X(48)   VALUE "**".
 
        01  GRAND-TOTAL-LINE-1.
-           05  FILLER              PIC X(25)   VALUE SPACE.
+           05  FILLER              PIC X(30)   VALUE SPACE.
            05  FILLER              PIC X(12)   VALUE "GRAND TOTAL:".
-           05  FILLER              PIC X(8)    VALUE SPACE.
+           05  FILLER              PIC X(3)    VALUE SPACE.
            05  FILLER              PIC X(10)   VALUE ALL "=".
            05  FILLER              PIC X(4)    VALUE SPACE.
            05  FILLER              PIC X(10)   VALUE ALL "=".
            05  FILLER              PIC X(4)    VALUE SPACE.
            05  FILLER              PIC X(10)   VALUE ALL "=".
            05  FILLER              PIC X(4)    VALUE SPACE.
-           05  FILLER              PIC X(7)    VALUE ALL "=".
-           05  FILLER              PIC X(47)   VALUE "***".
+           05  FILLER              PIC X(9)    VALUE ALL "=".
 
        01  GRAND-TOTAL-LINE-2.
            05  FILLER              PIC X(43)   VALUE SPACE.
            05  GTL-SALES-THIS-YTD  PIC Z,ZZZ,ZZ9.99-.
            05  FILLER              PIC X(1)    VALUE SPACE.
            05  GTL-SALES-LAST-YTD  PIC Z,ZZZ,ZZ9.99-.
-           05  FILLER              PIC X(1)    VALUE SPACE.
-           05  GTL-CHANGE-AMOUNT   PIC Z,ZZZ,ZZ9.99-.
+\           05  GTL-CHANGE-AMOUNT   PIC Z,ZZZ,ZZ9.99-.
            05  FILLER              PIC X(4)    VALUE SPACE.
            05  GTL-CHANGE-PERCENT  PIC ZZ9.9-.
-           05  FILLER              PIC X(37)   VALUE SPACE.
            05  FILLER              PIC X(47)   VALUE "***".
 
 
@@ -220,13 +217,13 @@
        PROCEDURE DIVISION.
        000-PREPARE-SALES-REPORT.
            OPEN INPUT  INPUT-CUSTMAST
-                OUTPUT OUTPUT-RPT5000.
+                OUTPUT OUTPUT-RPT6000.
            PERFORM 100-FORMAT-REPORT-HEADING.
            PERFORM 300-PREPARE-SALES-LINES
                UNTIL CUSTMAST-EOF.
            PERFORM 500-PRINT-GRAND-TOTALS.
            CLOSE INPUT-CUSTMAST
-                 OUTPUT-RPT5000.
+                 OUTPUT-RPT6000.
            STOP RUN.
 
 
@@ -262,8 +259,8 @@
               PERFORM 355-PRINT-SALESREP-LINE
               PERFORM 360-PRINT-BRANCH-LINE
               PERFORM 320-PRINT-CUSTOMER-LINE
-              MOVE CM-SALESREP-NUMBER TO OLD-SALESREP-NUMBER
-              MOVE CM-BRANCH-NUMBER TO OLD-BRANCH-NUMBER
+      *        MOVE CM-SALESREP-NUMBER TO OLD-SALESREP-NUMBER
+      *        MOVE CM-BRANCH-NUMBER TO OLD-BRANCH-NUMBER
            WHEN CM-SALESREP-NUMBER > OLD-SALESREP-NUMBER
               PERFORM 355-PRINT-SALESREP-LINE
               PERFORM 320-PRINT-CUSTOMER-LINE
@@ -287,16 +284,19 @@
       * calculates sales change amount and percentage, and writes the
       * formatted line to the report. It also updates branch totals.
        320-PRINT-CUSTOMER-LINE.
-           IF LINE-COUNT > LINES-ON-PAGE
+           IF LINE-COUNT >= LINES-ON-PAGE
               PERFORM 330-PRINT-HEADING-LINES.
-           IF NOT-FIRST-RECORD
-              MOVE CM-BRANCH-NUMBER TO CL-BRANCH-NUMBER
+
+           IF CM-BRANCH-NUMBER NOT = OLD-BRANCH-NUMBER
+                MOVE CM-BRANCH-NUMBER TO CL-BRANCH-NUMBER
            ELSE
-              IF CM-BRANCH-NUMBER > OLD-BRANCH-NUMBER
-                 MOVE CM-BRANCH-NUMBER TO CL-BRANCH-NUMBER
-              ELSE
-                 MOVE SPACE TO CL-BRANCH-NUMBER.
-           MOVE CM-SALESREP-NUMBER TO CL-SALESREP-NUMBER.
+                MOVE SPACES TO CL-BRANCH-NUMBER.
+
+           IF CM-SALESREP-NUMBER NOT = OLD-SALESREP-NUMBER
+              MOVE CM-SALESREP-NUMBER TO CL-SALESREP-NUMBER
+           ELSE
+              MOVE SPACES TO CL-SALESREP-NUMBER.
+
            MOVE CM-CUSTOMER-NUMBER TO CL-CUSTOMER-NUMBER.
            MOVE CM-CUSTOMER-NAME TO CL-CUSTOMER-NAME.
            MOVE CM-SALES-THIS-YTD TO CL-SALES-THIS-YTD.
@@ -316,6 +316,9 @@
            MOVE 1 TO SPACE-CONTROL.
            ADD CM-SALES-THIS-YTD TO SALESREP-TOTAL-THIS-YTD.
            ADD CM-SALES-LAST-YTD TO SALESREP-TOTAL-LAST-YTD.
+           MOVE CM-SALESREP-NUMBER TO OLD-SALESREP-NUMBER.
+           MOVE CM-BRANCH-NUMBER TO OLD-BRANCH-NUMBER.
+           
 
 
       * This paragraph handles page breaks and prints the report
