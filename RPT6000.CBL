@@ -311,12 +311,12 @@
               CM-SALES-THIS-YTD - CM-SALES-LAST-YTD.
            MOVE WS-CHANGE-AMOUNT TO CL-CHANGE-AMOUNT.
            IF CM-SALES-LAST-YTD = ZERO
-              MOVE 999.9 TO CL-CHANGE-PERCENT
+              MOVE "  N/A " TO CL-CHANGE-PERCENT-R
            ELSE
               COMPUTE CL-CHANGE-PERCENT ROUNDED =
                  WS-CHANGE-AMOUNT * 100 / CM-SALES-LAST-YTD
                  ON SIZE ERROR
-                    MOVE 999.9 TO CL-CHANGE-PERCENT.
+                    MOVE "OVRFLW" TO CL-CHANGE-PERCENT-R.
            MOVE CUSTOMER-LINE TO PRINT-AREA.
            PERFORM 350-WRITE-REPORT-LINE.
            MOVE 1 TO SPACE-CONTROL.
@@ -389,8 +389,9 @@
            MOVE 2 TO SPACE-CONTROL.
            ADD SALESREP-TOTAL-THIS-YTD TO BRANCH-TOTAL-THIS-YTD.
            ADD SALESREP-TOTAL-LAST-YTD TO BRANCH-TOTAL-LAST-YTD.
-           MOVE ZERO TO SALESREP-TOTAL-THIS-YTD.
-           MOVE ZERO TO SALESREP-TOTAL-LAST-YTD.
+           
+           INITIALIZE SALESREP-TOTAL-THIS-YTD.
+           INITIALIZE SALESREP-TOTAL-LAST-YTD.
 
 
       * This paragraph prints totals for a branch. It calculates total
@@ -420,8 +421,8 @@
            MOVE 2 TO SPACE-CONTROL.
            ADD BRANCH-TOTAL-THIS-YTD TO GRAND-TOTAL-THIS-YTD.
            ADD BRANCH-TOTAL-LAST-YTD TO GRAND-TOTAL-LAST-YTD.
-           MOVE ZERO TO BRANCH-TOTAL-THIS-YTD.
-           MOVE ZERO TO BRANCH-TOTAL-LAST-YTD.
+           INITIALIZE BRANCH-TOTAL-THIS-YTD.
+           INITIALIZE BRANCH-TOTAL-LAST-YTD.
 
 
       * This paragraph calculates and prints the overall grand totals
