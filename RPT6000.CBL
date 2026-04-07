@@ -18,6 +18,7 @@
 
        FILE-CONTROL.
            SELECT INPUT-CUSTMAST ASSIGN TO CUSTMAST.
+           SELECT INPUT-SALESREP ASSIGN TO SALESREP.
            SELECT OUTPUT-RPT6000 ASSIGN TO RPT6000.
 
        DATA DIVISION.
@@ -36,6 +37,16 @@
            05  CM-SALES-THIS-YTD       PIC S9(5)V9(2).
            05  CM-SALES-LAST-YTD       PIC S9(5)V9(2).
            05  FILLER                  PIC X(87).
+       
+       FD  INPUT-SALESREP
+           RECORDING MODE IS F
+           LABEL RECORDS ARE STANDARD
+           RECORD CONTAINS 130 CHARACTERS
+           BLOCK CONTAINS 130 CHARACTERS.
+       01  SALESREP-MASTER-RECORD.
+           05  SM-SALESREP-NUMBER      PIC 9(2).
+           05  SM-SALESREP-NAME        PIC 9(10).
+           05  FILLER                  PIC X(118).
 
        FD  OUTPUT-RPT6000
            RECORDING MODE IS F
@@ -47,18 +58,20 @@
 
        WORKING-STORAGE SECTION.
 
-       01 SALESREP-TABLE VALUE "10KDUNKER  11JSMITH    12TTHOMAS   14BJ
-      -    "ONES    17GFRANKLIN 21RWILLIAMS ".
-           05  SALESREP-GROUP OCCURS 7 TIMES
+       01 SALESREP-TABLE.
+           05  SALESREP-GROUP OCCURS 100 TIMES
                               INDEXED BY SRT-INDEX.
                10  SALESREP-NUMBER   PIC 9(2).
                10  SALESREP-NAME     PIC X(10).
 
        01  SWITCHES.
+           05  SALESREP-EOF-SWITCH     PIC X    VALUE "N".
+              88 SALESREP-EOF                   VALUE "Y".
            05  CUSTMAST-EOF-SWITCH     PIC X    VALUE "N".
               88 CUSTMAST-EOF                   VALUE "Y".
            05  FIRST-RECORD-SWITCH     PIC X    VALUE "Y".
               88 NOT-FIRST-RECORD               VALUE "N".
+           
 
        01  CONTROL-FIELDS.
            05  OLD-SALESREP-NUMBER     PIC 99.
@@ -222,13 +235,20 @@
       * execution.
        PROCEDURE DIVISION.
        000-PREPARE-SALES-REPORT.
+           INITIALIZE SALESREP-TABLE.
+
            OPEN INPUT  INPUT-CUSTMAST
+                INPUT  INPUT-SALESREP
                 OUTPUT OUTPUT-RPT6000.
            PERFORM 100-FORMAT-REPORT-HEADING.
+           
+           PERFORM 200-LOAD-SALESREP-TABLE.
+
            PERFORM 300-PREPARE-SALES-LINES
                UNTIL CUSTMAST-EOF.
            PERFORM 500-PRINT-GRAND-TOTALS.
            CLOSE INPUT-CUSTMAST
+                 INPUT-SALESREP
                  OUTPUT-RPT6000.
            STOP RUN.
 
@@ -244,6 +264,28 @@
            MOVE CD-YEAR    TO HL1-YEAR.
            MOVE CD-HOURS   TO HL2-HOURS.
            MOVE CD-MINUTES TO HL2-MINUTES.
+
+       200-LOAD-SALESREP-TABLE.
+
+           PERFORM
+              WITH TEST AFTER
+              VARYING SRT-INDEX FROM 1 BY 1
+              UNTIL SALESREP-EOF OR SRT-INDEX = 100
+                  PERFORM 210-READ-SALESREP-RECORD
+                  IF NOT SALESREP-EOF
+                     MOVE SM-SALESREP-NUMBER
+                        TO SALESREP-NUMBER (SRT-INDEX)
+                     MOVE SM-SALESREP-NAME
+                        TO SALESREP-NAME (SRT-INDEX)
+                  END-IF
+           END-PERFORM.
+
+       210-READ-SALESREP-RECORD.
+
+           READ INPUT-SALESREP
+              AT END
+                 SET SALESREP-EOF TO TRUE.
+
 
 
       * This is the main processing loop for the report. It reads each
