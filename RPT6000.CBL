@@ -29,24 +29,15 @@
            RECORD CONTAINS 130 CHARACTERS
            BLOCK CONTAINS 130 CHARACTERS.
 
-       01  CUSTOMER-MASTER-RECORD.
-           05  CM-BRANCH-NUMBER        PIC 9(2).
-           05  CM-SALESREP-NUMBER      PIC 9(2).
-           05  CM-CUSTOMER-NUMBER      PIC 9(5).
-           05  CM-CUSTOMER-NAME        PIC X(20).
-           05  CM-SALES-THIS-YTD       PIC S9(5)V9(2).
-           05  CM-SALES-LAST-YTD       PIC S9(5)V9(2).
-           05  FILLER                  PIC X(87).
-       
+       COPY CUSTMAST.
+
        FD  INPUT-SALESREP
            RECORDING MODE IS F
            LABEL RECORDS ARE STANDARD
            RECORD CONTAINS 130 CHARACTERS
            BLOCK CONTAINS 130 CHARACTERS.
-       01  SALESREP-MASTER-RECORD.
-           05  SM-SALESREP-NUMBER      PIC 9(2).
-           05  SM-SALESREP-NAME        PIC 9(10).
-           05  FILLER                  PIC X(118).
+
+       COPY SALESREP.
 
        FD  OUTPUT-RPT6000
            RECORDING MODE IS F
@@ -71,7 +62,7 @@
               88 CUSTMAST-EOF                   VALUE "Y".
            05  FIRST-RECORD-SWITCH     PIC X    VALUE "Y".
               88 NOT-FIRST-RECORD               VALUE "N".
-           
+
 
        01  CONTROL-FIELDS.
            05  OLD-SALESREP-NUMBER     PIC 99.
@@ -139,7 +130,7 @@
            05  FILLER         PIC X(17)  VALUE "BRANCH   SALESREP".
            05  FILLER         PIC X(13)  VALUE SPACES.
            05  FILLER         PIC X(8)   VALUE "CUSTOMER".
-           05  FILLER         PIC X(14)  VALUE SPACES. 
+           05  FILLER         PIC X(14)  VALUE SPACES.
            05  FILLER         PIC X(22)  VALUE "THIS YTD      LAST YTD".
            05  FILLER         PIC X(7)   VALUE SPACES.
            05  FILLER         PIC X(18)  VALUE "AMOUNT     PERCENT".
@@ -241,7 +232,7 @@
                 INPUT  INPUT-SALESREP
                 OUTPUT OUTPUT-RPT6000.
            PERFORM 100-FORMAT-REPORT-HEADING.
-           
+
            PERFORM 200-LOAD-SALESREP-TABLE.
 
            PERFORM 300-PREPARE-SALES-LINES
@@ -437,15 +428,15 @@
                  WS-CHANGE-AMOUNT * 100 / SALESREP-TOTAL-LAST-YTD
                  ON SIZE ERROR
                     MOVE "OVRFLW" TO STL-CHANGE-PERCENT-R.
-           
-           MOVE SPACES TO PRINT-AREA. 
+
+           MOVE SPACES TO PRINT-AREA.
            WRITE PRINT-AREA.
 
            MOVE SALESREP-TOTAL-LINE TO PRINT-AREA.
            MOVE 1 TO SPACE-CONTROL.
            PERFORM 350-WRITE-REPORT-LINE.
 
-           MOVE SPACES TO PRINT-AREA. 
+           MOVE SPACES TO PRINT-AREA.
            WRITE PRINT-AREA.
 
            MOVE 2 TO SPACE-CONTROL.
@@ -506,3 +497,4 @@
                     MOVE 999.9 TO GTL-CHANGE-PERCENT.
            MOVE GRAND-TOTAL-LINE TO PRINT-AREA.
            PERFORM 350-WRITE-REPORT-LINE.
+
