@@ -3,12 +3,10 @@ ___
 
 ## Overview
 ___
-The **RPT5000** program is an enhanced COBOL reporting tool designed to process customer sales data and generate a structured, year-to-date 
+The **RPT6000** program is an enhanced COBOL reporting tool designed to process customer sales data and generate a structured, year-to-date 
 sales report organized by branch and sales representative.
 
-Building upon the foundations of its predecessor (RPT3000), this version introduces control break processing, detailed sales comparisons, 
-and formatted report output with pagination. It provides a clear summary of sales performance, including calculated changes in both dollar 
-amount and percentage.
+This version is once again expanding off the previous versions by introducing a Sales Representative Lookup Table, enhanced control break logic, and more efficient processing. It then produces a fully formatted report including customer-level detail, sales representative totals, branch totals, and grand totals. There are also calculated changes for dollar amount and percentage.
 
 ## Table of Contents
 ___
@@ -20,24 +18,91 @@ ___
 * [Help](#help)
 * [Authors](#authors)
 
-### Key Functionalities
+## Key Functionalities
 ___
- * **EVALUATE** Statement
-Used to simplify complex decision-making by replacing multiple IF statements, especially for handling control breaks and end-of-file processing.
- * 88-Level Condition Names
-Improved readability by using condition names like CUSTMAST-EOF and NOT-FIRST-RECORD instead of raw values.
- * Control Break Processing
-Implemented logic to detect changes in branch and sales representative, triggering subtotal calculations and formatted output sections.
- * Sequential File Processing
-Read and processed fixed-format customer records from an input file, demonstrating structured batch processing.
- * Accumulation and Reset of Totals
-Used ADD and MOVE ZERO to maintain and reset running totals for sales representatives, branches, and grand totals.
- * Arithmetic Calculations with Error Handling
-Applied **COMPUTE** statements with **ROUNDED** and **ON SIZE ERROR** to safely calculate sales changes and percentages.
- * Pagination and Report Formatting
-Controlled page layout using line counters, headings, and spacing to produce a clean, professional report.
- * Modular Program Structure (Paragraphs & PERFORM)
-Organized logic into reusable paragraphs, improving readability, maintainability, and program flow.
+### Multi-File Processing
+
+* Reads from:
+
+  * **Customer Master File (CUSTMAST)**
+  * **Sales Representative File (SALESREP)**
+* Demonstrates handling and coordinating multiple sequential input files.
+
+### Sales Representative Lookup Table
+
+* Loads sales rep data into an in-memory table using **OCCURS** and **INDEXED BY**.
+* Uses **SEARCH** to match and display sales rep names dynamically.
+
+### Control Break Processing (Multi-Level)
+
+* Detects and handles breaks for:
+
+  * Sales Representative
+  * Branch
+  * Automatically prints:
+
+  * Sales rep totals
+  * Branch totals
+  * Final grand totals
+
+### EVALUATE-Based Control Flow
+
+* Uses the **EVALUATE TRUE** structure to simplify complex branching logic.
+* Handles:
+
+  * First record initialization
+  * Control breaks
+  * End-of-file processing
+
+### 88-Level Condition Names (Switches)
+
+* Improves readability and control flow using flags such as:
+
+  * `CUSTMAST-EOF`
+  * `SALESREP-EOF`
+  * `FIRST-RECORD-SWITCH`
+
+### Arithmetic Calculations with Error Handling
+
+* Computes:
+
+  * Sales change (amount)
+  * Sales change (percentage)
+* Uses:
+
+  * `COMPUTE ... ROUNDED`
+  * `ON SIZE ERROR`
+* Handles divide-by-zero cases with `"N/A"` or overflow indicators.
+
+### Accumulation and Roll-Up Totals
+
+* Maintains and rolls totals across levels:
+
+  * Customer → Sales Rep → Branch → Grand Total
+* Uses `ADD` and `INITIALIZE` for accumulation and reset logic.
+
+### Pagination and Report Formatting
+
+* Dynamically formats report output with:
+
+  * Page headers (date, time, page number)
+  * Column headings
+  * Line spacing control
+* Automatically handles page breaks.
+
+### Modular Program Structure
+
+* Organized into clearly defined paragraphs such as:
+
+  * `100-FORMAT-REPORT-HEADING`
+  * `200-LOAD-SALESREP-TABLE`
+  * `300-PREPARE-SALES-LINES`
+  * `355-PRINT-SALESREP-LINE`
+  * `360-PRINT-BRANCH-LINE`
+  * `500-PRINT-GRAND-TOTALS`
+* Uses **PERFORM** for structured, maintainable flow.
+
+---
 
 ## Tech Stack
 ___
@@ -82,11 +147,5 @@ ___
 * **Kirby's GitHub Profile**: [KirbyD-YEAH](https://github.com/KirbyD-YEAH)
 * **Kirby's Email**: [brdunk02@wsc.edu](mailto:brdunk@wsc.edu)
 
-**Clay Rasmussen**
-
-<img src="https://github.com/Clay-Rasmussen.png" alt="Profile Picture" width="100" />
-
-* **Clay's GitHub Profile**: [Clay-Rasmussen](https://github.com/Clay-Rasmussen)
-* **Clay's Email**: [clrasm02@wsc.edu](mailto:clrasm02@wsc.edu)
 
 [Back to the top](#overview)
