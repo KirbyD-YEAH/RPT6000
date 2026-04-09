@@ -117,7 +117,7 @@ ___
 
 ## Running Output
 ___
-![Code Running](assets/RPT5000AgainHolyCow.png)
+![Code Running](assets/CodeRunning.png)
 
 ## Learning Outcomes
 ___
